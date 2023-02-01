@@ -1,0 +1,54 @@
+a {
+    color: rgb(0,0,0)
+}
+
+.review {
+    display: none;
+}
+
+.comment {
+    position: relative;
+    display: none;
+}
+
+.postCommentForm {
+    display: none;
+}
+
+.showMoreCommentsIcon.active {
+    transform: rotate(90deg);
+}
+
+#showMoreReviewsIcon.active {
+    transform: rotate(90deg);
+}
+
+.review.show {
+    display: block;
+}
+
+.comment.show {
+    display: block;
+}
+
+.postCommentForm.show {
+    display: block;
+}
+
+.comment.reply::before {
+    content: "";
+    background-color: rgb(224, 2, 2);
+    position: absolute;
+    min-height: 100%;
+    width: 1px;
+    left: -10px;
+}
+
+.comment.reply {
+    margin-left: 3rem;
+}
+
+.replyOption.active:hover {
+    color: rgb(224, 2, 2);
+}
+            
