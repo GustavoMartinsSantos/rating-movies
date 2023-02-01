@@ -1,0 +1,128 @@
+    <%- include('./header.ejs') -%>
+    <body class="bg-dark">
+        <div class="container bg-info p-4">
+            <div class="row mb-4">
+                <div class="col-md-auto">
+                    <img src="https://image.tmdb.org/t/p/w500<%- movie.poster_path -%>" width="182px" height="250px" class="rounded">
+                </div>
+                <!-- style="background-image: url('https://image.tmdb.org/t/p/original/s16H6tpK2utvwDtzZ8Qy4qm5Emw.jpg'); background-size: 100%; opacity: 50%" -->
+                <div class="col">
+                    <strong><h2 class="mb-4"><%- movie.title -%></h2></strong>
+                    <h6>Sinopse: <%- movie.overview -%></h6>
+                    <h6>Data de Lançamento: <%- movie.release_date.split('-').reverse().join('/') -%></h6>
+                    <h6>Gêneros: <%- movie.genres.map(function (genre) {
+                        return genre.name
+                    }).join(', ') -%></h6>
+                    <h6>Produção: <%- movie.production_companies.map(function (company) {
+                        return company.name
+                    }).join(', ') -%></h6>
+                    <h6>Título original: <%- movie.original_title -%></h6>
+                </div>
+
+                <div class="col-lg-2 d-flex justify-content-center ">
+                    <i class="bi bi-star-fill text-center" style="color:rgb(0, 0, 0); font-size: 30pt"><br>7,5</i>
+                </div>
+            </div>
+
+            <div class="reviews-section">
+                <div id="show-reviews" onclick="showItems('review', 'showMoreReviewsIcon')" style="cursor: pointer">
+                    <i class="bi bi-caret-right-fill" id="showMoreReviewsIcon" style="float: right; transition-duration: 500ms;"></i>
+                    
+                    <a href="./<%- movie.id -%>/review">
+                        <i class="bi bi-plus-square-fill mx-4" style="float: right; font-size: 15pt"></i>
+                    </a>
+                    
+                    <h4>Avaliações</h4>
+                    <div style="height: 1px;" class="bg-dark mb-3 rounded"></div>
+                </div>
+
+                <%  var first = true
+                    movie.critics.forEach(function(Critic) { %>
+                    <div class="container rounded bg-dark text-light mb-4 p-4 <%- (first) ? first = false : 'review' -%> critic-section">
+                        <% if(Critic.User._id == req.id) { %>
+                            <div class="icon-buttons mt-2" style="float: right;">
+                                <a href="./<%- movie.id -%>/review/<%- Critic._id -%>">
+                                    <button class="btn btn-success rounded">Editar</button>
+                                </a>
+
+                                <a href="./<%- movie.id -%>/review/<%- Critic._id -%>">
+                                    <button class="btn btn-danger rounded">Excluir</button>
+                                </a>
+                            </div>
+                        <% } %>
+                        
+                        <strong><h4><%- validator(Critic.title) -%></h4></strong>
+                        
+                        <div class="description mt-4 mb-4"><%- validator(Critic.description).replace('\n', '<br>') -%></div>
+                        
+                        <div class="row mb-3 gx-2">
+                            <div class="col-md-auto" style="vertical-align: middle">
+                                <img src="../IMG/<%- Critic.User.Image.name ?? 'user.jpg' -%>" class="rounded" width="30px" height="30px">
+                            </div>
+
+                            <h5 class="col">
+                                <%- validator(Critic.User.firstName + ' ' + Critic.User.lastName) -%>
+                            </h5>
+                        </div>
+
+                        <div class="show-comments" onclick="showComments(this)">
+                            <i class="bi bi-caret-right-fill showMoreCommentsIcon" style="float: right; transition-duration: 500ms;"></i>
+                            <h5>Comentários</h5>
+                            <hr> 
+                        </div>
+    
+                        <div class="comments-section">
+                            <form method="POST" action="<%- `./${movie.id}/critic/${Critic._id}/comment` -%>" class="postCommentForm mb-4">
+                                <textarea name="description" class="form-control" rows="3" style="resize: none"></textarea>
+                                <input value="Postar" type="submit" class="rounded border-0 mt-2 text-light bg-primary ml-1" style="width: 15%">
+                            </form>
+                            
+                            <% function renderComments (Comments, parentComment) {
+                                Comments.forEach(function (Comment) { %>
+                                    <div class="comment <%- parentComment != null ? 'reply' : null -%>" <%- parentComment != null ? `ref="${parentComment}"` : null -%>  id="<%- Comment._id -%>">
+                                        <div class="container rounded border p-3 mb-3">
+                                            <div class="row">
+                                                <div class="col-md-auto">
+                                                    <img src="../IMG/<%- Comment.User.Image.name -%>" class="rounded-circle" width="50px" height="50px">
+                                                </div>
+            
+                                                <div class="col">
+                                                    <div style="float: right">
+                                                        <%- ((Comment.createdAt.toDateString() === Comment.updatedAt.toDateString()) ? 'Postado em ' : 'Editado em ') + 
+                                                        (Comment.updatedAt).toLocaleString('pt-br') -%>
+                                                    </div>
+
+                                                    <strong><h6>
+                                                        <%- validator(Comment.User.firstName + ' ' + Comment.User.lastName) -%>
+                                                    </h6></strong>
+            
+                                                    <div class="comment-description"><%- validator(Comment.description).replace('\n','<br>') -%></div>
+
+                                                    <div class="icon-buttons mt-2">
+                                                        <i class="bi bi-hand-thumbs-up-fill" style="cursor: pointer"><%- Comment.Likes.length -%></i>
+                                                        <i class="bi bi-reply p-3" style="cursor: pointer" onclick="showCommentReplies(this)"> <%- Comment.Replies.length -%> Replies</i>
+                                                        <% if(Comment.User._id == req.id) { %>
+                                                            <i class="bi bi-pencil-square" style="cursor: pointer" onclick="addEditCommentForm(this, '<%- `./${movie.id}/critic/${Critic._id}/comment/${Comment._id}` -%>')"></i> <!-- edit button -->
+                                                            <i class="bi bi-trash-fill p-3" style="cursor: pointer"></i> <!-- remove button -->
+                                                        <% } %>
+                                                        <div class="replyOption" style="cursor: pointer; display: inline-block" onclick="addReplyForm(this, '<%- `./${movie.id}/critic/${Critic._id}/comment/${Comment._id}` -%>')">Responder</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <% if (Comment.Replies.length > 0) { %>
+                                            <% renderComments(Comment.Replies, Comment._id) %>
+                                        <% } %>
+                                    </div>
+                                <% })
+                            } %>
+                            
+                            <% renderComments(Critic.Comments) %>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </body>
+</html>
