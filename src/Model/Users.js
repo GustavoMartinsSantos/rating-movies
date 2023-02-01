@@ -25,14 +25,12 @@ const UserSchema = new mongoose.Schema({
     },
     Image: {
         name: {
-            type: String,
-            unique: true
+            type: String
         }
     },
     Favorites: [{
         movieId:{
-            type: String,
-            unique: true
+            type: String
         }
     }]
 })
