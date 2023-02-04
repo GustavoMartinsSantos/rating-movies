@@ -83,12 +83,12 @@
                                         <div class="container rounded border p-3 mb-3">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <img src="../IMG/<%- Comment.User.Image.name -%>" class="rounded-circle" width="50px" height="50px">
+                                                    <img src="../IMG/<%- Comment.User.Image.name ?? 'user.jpg' -%>" class="rounded-circle" width="50px" height="50px">
                                                 </div>
             
                                                 <div class="col">
                                                     <div style="float: right">
-                                                        <%- ((Comment.createdAt.toDateString() === Comment.updatedAt.toDateString()) ? 'Postado em ' : 'Editado em ') + 
+                                                        <%- ((Comment.createdAt.toISOString() === Comment.updatedAt.toISOString()) ? 'Postado em ' : 'Editado em ') + 
                                                         (Comment.updatedAt).toLocaleString('pt-br') -%>
                                                     </div>
 
