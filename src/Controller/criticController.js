@@ -7,9 +7,9 @@ router.use(authMiddleware)
 
 router.post('/:movieId', async (req, res) => {
     try {
-        const { title, description, rating } = req.body
+        const { title, description } = req.body
         var critic = {
-            title, description, rating,
+            title, description,
             user: {
                 id: req.id,
                 movieId: req.params.movieId
