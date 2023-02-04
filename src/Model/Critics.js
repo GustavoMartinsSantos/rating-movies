@@ -9,17 +9,6 @@ const CriticSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    rating:{
-        type: mongoose.SchemaTypes.Decimal128
-    },
-    createdAt:{
-        type: Date,
-        default: Date.now
-    },
-    updatedAt:{
-        type: Date,
-        default: Date.now
-    },
     movieId:{
         type: String,
         required: true
@@ -40,7 +29,7 @@ const CriticSchema = new mongoose.Schema({
         ref: 'Comment',
         autopopulate: true
     }]
-})
+}, { timestamps: true })
 
 CriticSchema.plugin(require('mongoose-autopopulate'))
 
