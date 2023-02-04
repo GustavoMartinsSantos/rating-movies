@@ -37,8 +37,7 @@ router.patch('/:movieId/critic/:criticId/comment/:commentId', async(req, res) =>
         if((await Comments.find({$and: [{ _id: req.params.commentId}, {User: req.id }]})).length == 0) // testar
             return res.status(403).send('O usuário não possui permissão para alterar este comentário.')
 
-        // set updatedAt with date now
-        await Comments.updateOne({ _id: req.params.commentId }, { description: description })
+        await Comments.updateOne({ _id: req.params.commentId }, {$set: {description: description} })
 
         res.redirect('http://localhost:3000/movie/' + req.params.movieId)
     } catch(error) {
