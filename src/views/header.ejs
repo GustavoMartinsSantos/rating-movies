@@ -12,15 +12,13 @@
             <%- `<link rel="stylesheet" href="../views/CSS/${cssStyle}">` -%>
         <% }) %>
         <script>
-            function sendAjax (form, uri, method) {
+            function sendAjax (uri, method, data = null) {
                 event.preventDefault()
-
-                var formData = $(form).serialize();
 
                 $.ajax({
                     'url': uri,
                     'method': method,
-                    'data': formData
+                    'data': data
                 })
 
                 location.reload()
