@@ -19,7 +19,6 @@ const CommentSchema = new mongoose.Schema({
     Likes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        autopopulate: true
     }]
 }, { timestamps: true })
 
