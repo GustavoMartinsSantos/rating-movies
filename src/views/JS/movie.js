@@ -60,7 +60,7 @@ function addEditCommentForm (button, action) {
         button.classList.toggle('text-danger')
 
         description.innerHTML = 
-        `<form class="editForm" onsubmit="sendAjax(this, '${action}', 'PATCH')">
+        `<form class="editForm" onsubmit="sendAjax('${action}', 'PATCH', $(this).serialize())">
             <textarea name="description" class="input form-control bg-dark text-white border" rows="3" style="resize: none">${description.innerHTML.replace('<br>', '\n')}</textarea>
             <input type="submit" value="Editar" style="float: right" class="mt-2 btn btn-success rounded">
         </form>`
