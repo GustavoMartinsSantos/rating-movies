@@ -99,7 +99,8 @@
                                                     <div class="comment-description"><%- validator(Comment.description).replace('\n','<br>') -%></div>
 
                                                     <div class="icon-buttons mt-2">
-                                                        <i class="bi bi-hand-thumbs-up-fill" style="cursor: pointer"><%- Comment.Likes.length -%></i>
+                                                        <i class="bi bi-hand-thumbs-up<%- Comment.Likes.includes(req.id) ? '-fill' : null -%>" style="cursor: pointer" 
+                                                            onclick="sendAjax('<%-`./${movie.id}/critic/${Critic._id}/comment/${Comment._id}/like`-%>', 'GET')"><%- Comment.Likes.length -%></i>
                                                         <i class="bi bi-reply p-3" style="cursor: pointer" onclick="showCommentReplies(this)"> <%- Comment.Replies.length -%> Replies</i>
                                                         <% if(Comment.User._id == req.id) { %>
                                                             <i class="bi bi-pencil-square" style="cursor: pointer" onclick="addEditCommentForm(this, '<%- `./${movie.id}/critic/${Critic._id}/comment/${Comment._id}` -%>')"></i> <!-- edit button -->
