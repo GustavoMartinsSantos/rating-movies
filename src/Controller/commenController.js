@@ -7,12 +7,12 @@ const router = express.Router()
 router.use(authMiddleware)
 
 router.post('/:movieId/critic/:criticId/comment', async (req, res) => {
-    try {
+    try { // add routes and its validations (commentId, criticId, movieId)
         const { description } = req.body
             
         if(!description)
             return res.status(400).send('Elementos POST não enviados!')
-        
+
         var comment = {
             description,
             User: req.id
@@ -34,7 +34,7 @@ router.patch('/:movieId/critic/:criticId/comment/:commentId', async(req, res) =>
 
         if(!description)
             return res.status(400).send('Elementos PATCH não enviados!')
-        if((await Comments.find({$and: [{ _id: req.params.commentId}, {User: req.id }]})).length == 0) // testar
+        if((await Comments.find({$and: [{ _id: req.params.commentId}, {User: req.id }]})).length == 0)
             return res.status(403).send('O usuário não possui permissão para alterar este comentário.')
 
         await Comments.updateOne({ _id: req.params.commentId }, {$set: {description: description} })
@@ -68,8 +68,22 @@ router.post('/:movieId/critic/:criticId/comment/:parentCommentId', async(req, re
     }
 })
 
-router.post('/:movieId/critic/comment/:commentId/like', async(req, res) => {
-    
+router.get('/:movieId/critic/:criticId/comment/:commentId/like', async(req, res) => {
+    try {
+        let comment = await Comments.findOne({ _id: req.params.commentId})
+        
+        if(comment == null)
+            return res.status(403).send('Comentário não encontrado!')
+
+        if(comment.Likes.includes(req.id)) // unlikes the comment
+            await Comments.updateOne({ _id: comment.id }, { $pull: { Likes: req.id } })
+        else                               // likes the comment
+            await Comments.updateOne({ _id: comment.id }, { $push: { Likes: req.id } })
+
+        res.redirect('http://localhost:3000/movie/' + req.params.movieId)
+    } catch(error) {
+        return res.send(error)
+    }
 })
 
 module.exports = router
