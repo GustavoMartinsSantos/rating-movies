@@ -1,11 +1,6 @@
-const express = require('express')
 const Critics = require('../Model/Critics')
-const authMiddleware = require('../Middlewares/auth')
 
-const router = express.Router()
-router.use(authMiddleware)
-
-router.post('/:movieId', async (req, res) => {
+const add = async (req, res) => {
     try {
         const { title, description } = req.body
         var critic = {
@@ -25,6 +20,8 @@ router.post('/:movieId', async (req, res) => {
     } catch(error) {
         return res.send(error)
     }
-})
+}
 
-module.exports = router
+module.exports = {
+    add
+}

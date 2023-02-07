@@ -1,10 +1,6 @@
-const express = require('express')
 const JWT = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const Users = require('../Model/Users')
-const authMiddleware = require('../middlewares/auth')
-
-const router = express.Router()
 
 function generateToken (params = {}) {
     return JWT.sign(params, process.env.SECRET, {
@@ -12,7 +8,7 @@ function generateToken (params = {}) {
     })
 }
 
-router.post('/register', async (req, res) => {
+const register = async (req, res) => {
     try {
         const { firstName, lastName, email, password, Image } = req.body
         var user = {
@@ -32,9 +28,9 @@ router.post('/register', async (req, res) => {
         console.log(error)
         return res.status(400)
     }
-})
+}
 
-router.post('/auth', async (req, res) => {
+const auth = async (req, res) => {
     try {
         const { email, password } = req.body
     
@@ -54,9 +50,9 @@ router.post('/auth', async (req, res) => {
         console.log(error)
         return res.status(400)
     }
-})
+}
 
-router.post('/user', authMiddleware, async (req, res) => {
+const update = async (req, res) => {
     try {
         const { firstName, lastName, Image } = req.body
 
@@ -68,7 +64,7 @@ router.post('/user', authMiddleware, async (req, res) => {
             res.status(400).send('Elementos POST não enviados!')
 
         // get id by token
-        if(!await User.findByIdAndUpdate(req.id, userData))
+        if(!await Users.findByIdAndUpdate(req.id, userData))
             return res.send('Usuário não encontrado!')
         
         return res.send('Usuário atualizado com sucesso.')
@@ -76,6 +72,10 @@ router.post('/user', authMiddleware, async (req, res) => {
         console.log(error)
         return res.status(400)
     }
-})
+}
 
-module.exports = router
+module.exports = {
+    register,
+    auth,
+    update
+}

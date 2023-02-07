@@ -1,12 +1,7 @@
-const express = require('express')
 const Comments = require('../Model/Comments')
 const Critics = require('../Model/Critics')
-const authMiddleware = require('../Middlewares/auth')
 
-const router = express.Router()
-router.use(authMiddleware)
-
-router.post('/:movieId/critic/:criticId/comment', async (req, res) => {
+const add = async (req, res) => {
     try { // add routes and its validations (commentId, criticId, movieId)
         const { description } = req.body
             
@@ -26,9 +21,9 @@ router.post('/:movieId/critic/:criticId/comment', async (req, res) => {
     } catch (error) {
         return res.send(error)
     }
-})
+}
 
-router.patch('/:movieId/critic/:criticId/comment/:commentId', async(req, res) => {
+const update = async(req, res) => {
     try {
         const { description } = req.body
 
@@ -43,9 +38,9 @@ router.patch('/:movieId/critic/:criticId/comment/:commentId', async(req, res) =>
     } catch(error) {
         return res.status(500).send(error)
     }
-})
+}
 
-router.post('/:movieId/critic/:criticId/comment/:parentCommentId', async(req, res) => {
+const addReply = async(req, res) => {
     try { // adding reply
         const { description } = req.body
             
@@ -66,14 +61,11 @@ router.post('/:movieId/critic/:criticId/comment/:parentCommentId', async(req, re
     } catch (error) {
         return res.send(error)
     }
-})
+}
 
-router.get('/:movieId/critic/:criticId/comment/:commentId/like', async(req, res) => {
+const like = async(req, res) => {
     try {
         let comment = await Comments.findOne({ _id: req.params.commentId})
-        
-        if(comment == null)
-            return res.status(403).send('Comentário não encontrado!')
 
         if(comment.Likes.includes(req.id)) // unlikes the comment
             await Comments.updateOne({ _id: comment.id }, { $pull: { Likes: req.id } })
@@ -84,6 +76,11 @@ router.get('/:movieId/critic/:criticId/comment/:commentId/like', async(req, res)
     } catch(error) {
         return res.send(error)
     }
-})
+}
 
-module.exports = router
+module.exports = {
+    add,
+    update,
+    addReply,
+    like
+}
