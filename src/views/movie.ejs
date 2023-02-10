@@ -17,6 +17,12 @@
                         return company.name
                     }).join(', ') -%></h6>
                     <h6>Título original: <%- movie.original_title -%></h6>
+
+                    <form method="POST" class="rating-stars mt-3">
+                        <% for(var rate = 10; rate > 0; rate-=0.5) { %>
+                            <input type="radio" name="rate" value="<%- rate -%>" onclick="this.form.submit()">
+                        <% } %>
+                    </form>
                 </div>
 
                 <div class="col-lg-2 d-flex justify-content-center ">
