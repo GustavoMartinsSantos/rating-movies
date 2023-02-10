@@ -2,6 +2,46 @@ a {
     color: rgb(0,0,0)
 }
 
+.rating-stars {
+    position: relative;
+    display: flex;
+    width: 400px;
+    margin-top: 10px;
+    flex-direction: row-reverse;
+}
+
+.rating-stars input {
+    position: relative;
+    height: 22pt;
+    width: 20px;
+    display: flex;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    appearance: none;
+    overflow: hidden;
+}
+
+.rating-stars input::before {
+    content: '\f005';
+    position: absolute;
+    font-family: fontAwesome;
+    font-size: 22pt;
+    left: 33%;
+}
+
+.rating-stars input:nth-child(2n + 1)::before {
+    left: initial;
+    right: 33%;
+}
+
+.rating-stars input:hover ~ input:before,
+    input:hover::before,
+    input:checked ~ input::before,
+    input:checked::before {
+    color: rgb(255, 255, 0);
+}
+
 .review {
     display: none;
 }
