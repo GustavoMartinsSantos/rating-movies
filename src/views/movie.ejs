@@ -20,7 +20,7 @@
 
                     <form method="POST" class="rating-stars mt-3">
                         <% for(var rate = 10; rate > 0; rate-=0.5) { %>
-                            <input type="radio" name="rate" value="<%- rate -%>" onclick="this.form.submit()">
+                            <input type="radio" class="<%- (movie.rate >= rate) ? 'checked' : null -%>" name="rate" value="<%- rate -%>" onclick="this.form.submit()">
                         <% } %>
                     </form>
                 </div>

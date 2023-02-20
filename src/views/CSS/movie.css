@@ -38,7 +38,7 @@ a {
 .rating-stars input:hover ~ input:before,
     input:hover::before,
     input:checked ~ input::before,
-    input:checked::before {
+    input:checked::before, .checked {
     color: rgb(255, 255, 0);
 }
 
