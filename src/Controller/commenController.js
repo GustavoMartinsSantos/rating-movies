@@ -2,7 +2,7 @@ const Comments = require('../Model/Comments')
 const Critics = require('../Model/Critics')
 
 const add = async (req, res) => {
-    try { // add routes and its validations (commentId, criticId, movieId)
+    try {
         const { description } = req.body
             
         if(!description)

@@ -8,11 +8,13 @@ const criticController = require('../Controller/criticController')
 const commenController = require('../Controller/commenController')
 
 router.post('/register', userController.register)
+router.get('/auth', userController.login)
 router.post('/auth', userController.auth)
 router.put('/user', auth, userController.update)
 
 router.get('/', movieController.getMovies)
 router.get('/movie/:movieId', [auth, validateURL], movieController.getMovie)
+router.post('/movie/:movieId', [auth, validateURL], movieController.rateMovie)
 
 router.post('/movie/:movieId/critic/', [auth, validateURL], criticController.add)
 

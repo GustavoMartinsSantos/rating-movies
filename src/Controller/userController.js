@@ -23,11 +23,19 @@ const register = async (req, res) => {
 
         user = await Users.create(user)
 
-        return res.send({user, token: generateToken({id: user.id, firstName: user.firstName, Image: user.Image.name})})
+        const token =  generateToken({id: user.id, firstName: user.firstName, Image: user.Image.name, ratings: user.Ratings})
+
+        return res.send({user, token})
     } catch (error) {
         console.log(error)
         return res.status(400)
     }
+}
+
+const login = async (req, res) => {
+    //var teste = LocalStorage.getItem('../auth');
+
+    res.render('login')
 }
 
 const auth = async (req, res) => {
@@ -44,8 +52,15 @@ const auth = async (req, res) => {
 
         if(!await bcrypt.compare(password, user.password))
             return res.status(400).send('Senha incorreta!')
+            
+        const token = generateToken({id: user.id, firstName: user.firstName, Image: user.Image.name, ratings: user.Ratings})
 
-        return res.send({user, token: generateToken({id: user.id, firstName: user.firstName, Image: user.Image.name})})
+        res.cookie('auth', `Bearer ${token}`, {
+            httpOnly: true,
+            secure: true
+        })
+
+        res.redirect('http://localhost:3000/movie/76600')
     } catch (error) {
         console.log(error)
         return res.status(400)
@@ -77,5 +92,7 @@ const update = async (req, res) => {
 module.exports = {
     register,
     auth,
-    update
+    login,
+    update,
+    generateToken
 }

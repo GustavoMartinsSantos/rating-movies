@@ -1,10 +1,10 @@
 const JWT = require('jsonwebtoken')
 
 module.exports = (req, res, next) => {
-    const authHeader = req.headers.auth
-
-    if(!authHeader)
+    if(req.cookies?.['auth'] == undefined)
         return res.status(401).send('Token não enviado')
+
+    const authHeader = req.cookies.auth
 
     const tokenParts = authHeader.split(' ')
 
@@ -19,6 +19,8 @@ module.exports = (req, res, next) => {
             return res.status(401).send('Token incorreto!')
 
         req.id = decoded.id
+        req.favorites = decoded.favorites
+        req.ratings = decoded.ratings
         req.firstName = decoded.firstName
         req.image = decoded.Image
 

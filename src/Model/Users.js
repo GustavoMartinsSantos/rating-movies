@@ -32,6 +32,14 @@ const UserSchema = new mongoose.Schema({
         movieId:{
             type: String
         }
+    }],
+    Ratings :[{
+        value: {
+            type: Number
+        },
+        movieId:{
+            type: String
+        }
     }]
 })
 
