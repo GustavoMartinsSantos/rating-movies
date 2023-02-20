@@ -33,8 +33,6 @@ const register = async (req, res) => {
 }
 
 const login = async (req, res) => {
-    //var teste = LocalStorage.getItem('../auth');
-
     res.render('login')
 }
 
@@ -60,7 +58,7 @@ const auth = async (req, res) => {
             secure: true
         })
 
-        res.redirect('http://localhost:3000/movie/76600')
+        res.redirect('http://localhost:3000')
     } catch (error) {
         console.log(error)
         return res.status(400)
