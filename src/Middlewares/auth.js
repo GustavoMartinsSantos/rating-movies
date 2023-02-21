@@ -2,7 +2,7 @@ const JWT = require('jsonwebtoken')
 
 module.exports = (req, res, next) => {
     if(req.cookies?.['auth'] == undefined)
-        return res.status(401).send('Token não enviado')
+        return res.redirect('http://localhost:3000/auth')
 
     const authHeader = req.cookies.auth
 
