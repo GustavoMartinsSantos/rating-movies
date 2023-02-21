@@ -23,6 +23,17 @@ const getMovie = async (req, res) => {
             movie.rate = rating.value
     });
 
+    movie.avgRating = await Users.aggregate([
+        { $unwind: "$Ratings" },
+        { $match: { "Ratings.movieId": req.params.movieId }}, // aggregation where clause
+        { $group: { "_id": "$Ratings.movieId", "rate": { $avg: "$Ratings.value" }}}
+    ])
+
+    movie.avgRating = movie.avgRating?.[0]?.rate
+
+    if(movie.avgRating == null)
+        movie.avgRating = movie.vote_average
+
     res.render('movie', { movie, validator, req, pageTitle, cssStyles, jsScripts })
 }
 

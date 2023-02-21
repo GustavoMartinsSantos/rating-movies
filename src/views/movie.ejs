@@ -26,7 +26,9 @@
                 </div>
 
                 <div class="col-lg-2 d-flex justify-content-center ">
-                    <i class="bi bi-star-fill text-center" style="color:rgb(0, 0, 0); font-size: 30pt"><br>7,5</i>
+                    <i class="bi bi-star-fill text-center" style="color:rgb(0, 0, 0); font-size: 30pt"><br>
+                        <%- movie.avgRating.toFixed(1).toLocaleString().replace('.', ',') -%>
+                    </i>
                 </div>
             </div>
 
