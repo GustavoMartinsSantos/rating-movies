@@ -16,7 +16,7 @@ module.exports = (req, res, next) => {
     
     JWT.verify(tokenParts[1], process.env.SECRET, (err, decoded) => {
         if(err)
-            return res.status(401).send('Token incorreto!')
+            return res.redirect('http://localhost:3000/auth')
 
         req.id = decoded.id
         req.favorites = decoded.favorites

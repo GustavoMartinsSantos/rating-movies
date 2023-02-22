@@ -15,7 +15,7 @@ const getMovie = async (req, res) => {
     movie.critics = await Critics.find({ movieId: req.params.movieId })
 
     var cssStyles = ['movie.css']
-    var jsScripts = ['movie.js']
+    var jsScripts = ['movie.js', 'jQuery.js']
     var pageTitle = movie.title
 
     req.ratings.forEach(rating => {
