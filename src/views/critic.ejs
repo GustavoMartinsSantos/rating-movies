@@ -1,0 +1,31 @@
+    <%- include('./header.ejs') -%>
+    <body class="bg-dark">
+        <div class="container bg-info pt-4 rounded-bottom" style="padding: 0">
+            <div class="text-center bg-dark p-2">
+                <h2 style="color: rgb(255, 166, 0); font-family: Berlin Sans FB">Avaliar Obra</h2>
+            </div>
+
+            <form method="POST" class="p-4">    
+                <div class="form-floating">
+                    <input id="titleInput" name="title" type="text" class="form-control mb-4" placeholder="title" required>
+                    <label for="titleInput">Título</label>
+                </div>
+
+                <label><h5>Descrição</h5></label>
+                <textarea class="form-control mb-3" rows="10" style="resize: none;" required></textarea>
+
+                <div class="row p-2 justify-content-center">
+                    <div class="col-md-5">
+                        <div class="form-control rounded-pill bg-warning border-0" style="font-family: Bahnschrift">
+                            <h5 class="mx-2 mt-2">Filme: <%- movie.title -%></h5>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5 mt-2">
+                        <input type="submit" class="form-control border-0 text-white bg-success">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

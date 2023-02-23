@@ -1,4 +1,14 @@
 const Critics = require('../Model/Critics')
+const API = require('../Model/API')
+
+const create = async (req, res) => {
+    var pageTitle = 'Avaliar Filme'
+
+    const link = `https://api.themoviedb.org/3/movie/${req.params.movieId}?api_key=${process.env.API_KEY}&language=pt-BR`
+    let movie = await new API(link).request()
+
+    res.render('critic', { pageTitle, movie })
+}
 
 const add = async (req, res) => {
     try {
@@ -23,5 +33,6 @@ const add = async (req, res) => {
 }
 
 module.exports = {
+    create,
     add
 }
