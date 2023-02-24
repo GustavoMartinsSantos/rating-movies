@@ -1,24 +1,58 @@
 const Critics = require('../Model/Critics')
 const API = require('../Model/API')
+const { ObjectId } = require('mongodb');
 
 const create = async (req, res) => {
-    var pageTitle = 'Avaliar Filme'
+    try {
+        var pageTitle = 'Avaliar Filme'
 
-    const link = `https://api.themoviedb.org/3/movie/${req.params.movieId}?api_key=${process.env.API_KEY}&language=pt-BR`
-    let movie = await new API(link).request()
+        const link = `https://api.themoviedb.org/3/movie/${req.params.movieId}?api_key=${process.env.API_KEY}&language=pt-BR`
+        let movie = await new API(link).request()
 
-    res.render('critic', { pageTitle, movie })
+        return res.render('critic', { pageTitle, movie })
+    } catch(error) {
+        return res.send(error)
+    }
+}
+
+const show = async (req, res) => {    
+    try {
+        var pageTitle = 'Editar Avaliação'
+
+        const link = `https://api.themoviedb.org/3/movie/${req.params.movieId}?api_key=${process.env.API_KEY}&language=pt-BR`
+        let movie = await new API(link).request()
+
+        if(!ObjectId.isValid(req.params.criticId))
+            return res.redirect('http://localhost:3000/movie/' + req.params.movieId)
+
+        let critic = await Critics.findOne({ _id: req.params.criticId })
+        
+        if(critic == null)
+            return res.redirect('http://localhost:3000/movie/' + req.params.movieId)
+        
+        return res.render('critic', { pageTitle, movie, critic })
+    } catch(error) {
+        return res.send(error)
+    }
+}
+
+const update = async (req, res) => {
+    try {
+
+    } catch(error) {
+        return res.send(error)
+    }
 }
 
 const add = async (req, res) => {
     try {
         const { title, description } = req.body
+        
         var critic = {
-            title, description,
-            user: {
-                id: req.id,
-                movieId: req.params.movieId
-            }
+            title, 
+            description, 
+            movieId: req.params.movieId, 
+            User: req.id
         }
 
         if(!title || !description)
@@ -26,7 +60,7 @@ const add = async (req, res) => {
 
         critic = await Critics.create(critic)
 
-        return res.send({critic})
+        return res.redirect('http://localhost:3000/movie/' + req.params.movieId)
     } catch(error) {
         return res.send(error)
     }
@@ -34,5 +68,7 @@ const add = async (req, res) => {
 
 module.exports = {
     create,
-    add
+    add,
+    show,
+    update
 }

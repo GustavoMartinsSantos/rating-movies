@@ -7,12 +7,13 @@
 
             <form method="POST" class="p-4">    
                 <div class="form-floating">
-                    <input id="titleInput" name="title" type="text" class="form-control mb-4" placeholder="title" required>
+                    <input id="titleInput" name="title" type="text" class="form-control mb-4" 
+                    placeholder="title" value="<%- typeof(critic) != 'undefined' ? critic.title : null -%>" required>
                     <label for="titleInput">Título</label>
                 </div>
 
                 <label><h5>Descrição</h5></label>
-                <textarea class="form-control mb-3" rows="10" style="resize: none;" required></textarea>
+                <textarea name="description" class="form-control mb-3" rows="10" style="resize: none;" required><%- typeof(critic) != 'undefined' ? critic.description : null -%></textarea>
 
                 <div class="row p-2 justify-content-center">
                     <div class="col-md-5">
