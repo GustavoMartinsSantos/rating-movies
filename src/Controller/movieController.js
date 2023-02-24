@@ -5,36 +5,44 @@ const Users = require('../Model/Users')
 const userController = require('../Controller/userController')
 
 const getMovies = async (req, res) => {
-    res.send('Olá filmes')
+    try {
+        return res.send('Olá filmes')
+    } catch (error) {
+        return res.send(error)
+    }
 }
 
 const getMovie = async (req, res) => {
-    const link = `https://api.themoviedb.org/3/movie/${req.params.movieId}?api_key=${process.env.API_KEY}&language=pt-BR`
-    let movie = await new API(link).request()
-    
-    movie.critics = await Critics.find({ movieId: req.params.movieId })
+    try {
+        const link = `https://api.themoviedb.org/3/movie/${req.params.movieId}?api_key=${process.env.API_KEY}&language=pt-BR`
+        let movie = await new API(link).request()
+        
+        movie.critics = await Critics.find({ movieId: req.params.movieId })
 
-    var cssStyles = ['movie.css']
-    var jsScripts = ['movie.js', 'jQuery.js']
-    var pageTitle = movie.title
+        var cssStyles = ['movie.css']
+        var jsScripts = ['movie.js', 'jQuery.js']
+        var pageTitle = movie.title
 
-    req.ratings.forEach(rating => {
-        if(rating.movieId == movie.id)
-            movie.rate = rating.value
-    });
+        req.ratings.forEach(rating => {
+            if(rating.movieId == movie.id)
+                movie.rate = rating.value
+        });
 
-    movie.avgRating = await Users.aggregate([
-        { $unwind: "$Ratings" },
-        { $match: { "Ratings.movieId": req.params.movieId }}, // aggregation where clause
-        { $group: { "_id": "$Ratings.movieId", "rate": { $avg: "$Ratings.value" }}}
-    ])
+        movie.avgRating = await Users.aggregate([
+            { $unwind: "$Ratings" },
+            { $match: { "Ratings.movieId": req.params.movieId }}, // aggregation where clause
+            { $group: { "_id": "$Ratings.movieId", "rate": { $avg: "$Ratings.value" }}}
+        ])
 
-    movie.avgRating = movie.avgRating?.[0]?.rate
+        movie.avgRating = movie.avgRating?.[0]?.rate
 
-    if(movie.avgRating == null)
-        movie.avgRating = movie.vote_average
+        if(movie.avgRating == null)
+            movie.avgRating = movie.vote_average
 
-    res.render('movie', { movie, validator, req, pageTitle, cssStyles, jsScripts })
+        return res.render('movie', { movie, validator, req, pageTitle, cssStyles, jsScripts })
+    } catch (error) {
+        return res.send(error)
+    }
 }
 
 const rateMovie = async (req, res) => {
@@ -78,7 +86,7 @@ const rateMovie = async (req, res) => {
         else // update
             await Users.updateOne({ _id: req.id }, { $set: { "Ratings.$[element].value": rate } }, { "arrayFilters": [{ "element.movieId": req.params.movieId }]})
         
-        res.redirect('http://localhost:3000/movie/' + req.params.movieId)
+        return res.redirect('http://localhost:3000/movie/' + req.params.movieId)
     } catch (error) {
         return res.send(error)
     }

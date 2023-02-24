@@ -33,7 +33,7 @@ const register = async (req, res) => {
 }
 
 const login = async (req, res) => {
-    res.render('login')
+    return res.render('login')
 }
 
 const auth = async (req, res) => {
@@ -58,7 +58,7 @@ const auth = async (req, res) => {
             secure: true
         })
 
-        res.redirect('http://localhost:3000')
+        return res.redirect('http://localhost:3000')
     } catch (error) {
         console.log(error)
         return res.status(400)
@@ -74,7 +74,7 @@ const update = async (req, res) => {
         }
 
         if(!firstName || !lastName)
-            res.status(400).send('Elementos POST não enviados!')
+            return res.status(400).send('Elementos POST não enviados!')
 
         // get id by token
         if(!await Users.findByIdAndUpdate(req.id, userData))
