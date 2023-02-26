@@ -17,7 +17,7 @@ const add = async (req, res) => {
 
         await Critics.updateOne({ _id: req.params.criticId }, { $push: { Comments: comment.id } })
 
-        res.redirect('http://localhost:3000/movie/' + req.params.movieId)
+        return res.redirect('http://localhost:3000/movie/' + req.params.movieId)
     } catch (error) {
         return res.send(error)
     }
@@ -33,8 +33,6 @@ const update = async(req, res) => {
             return res.status(403).send('O usuário não possui permissão para alterar este comentário.')
 
         await Comments.updateOne({ _id: req.params.commentId }, {$set: {description: description} })
-
-        res.redirect('http://localhost:3000/movie/' + req.params.movieId)
     } catch(error) {
         return res.status(500).send(error)
     }
@@ -57,7 +55,7 @@ const addReply = async(req, res) => {
         // the comment is a reply to another comment
         await Comments.updateOne({ _id: req.params.parentCommentId }, { $push: { Replies: comment.id } })
 
-        res.redirect('http://localhost:3000/movie/' + req.params.movieId)
+        return res.redirect('http://localhost:3000/movie/' + req.params.movieId)
     } catch (error) {
         return res.send(error)
     }
@@ -72,7 +70,7 @@ const like = async(req, res) => {
         else                               // likes the comment
             await Comments.updateOne({ _id: comment.id }, { $push: { Likes: req.id } })
 
-        res.redirect('http://localhost:3000/movie/' + req.params.movieId)
+        return res.redirect('http://localhost:3000/movie/' + req.params.movieId)
     } catch(error) {
         return res.send(error)
     }

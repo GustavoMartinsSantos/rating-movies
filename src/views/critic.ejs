@@ -5,7 +5,7 @@
                 <h2 style="color: rgb(255, 166, 0); font-family: Berlin Sans FB">Avaliar Obra</h2>
             </div>
 
-            <form method="POST" class="p-4">    
+            <form <%- typeof(critic) != 'undefined' ? `onsubmit="sendAjax(window.location.href, 'PUT', $(this).serialize(), '../../${movie.id}')"` : `method="POST"` -%> class="p-4">    
                 <div class="form-floating">
                     <input id="titleInput" name="title" type="text" class="form-control mb-4" 
                     placeholder="title" value="<%- typeof(critic) != 'undefined' ? critic.title : null -%>" required>
@@ -23,7 +23,7 @@
                     </div>
 
                     <div class="col-md-5 mt-2">
-                        <input type="submit" class="form-control border-0 text-white bg-success">
+                        <input type="submit" class="form-control border-0 text-white bg-success" value="<%- typeof(critic) == 'undefined' ? 'Avaliar' : 'Editar' -%>">
                     </div>
                 </div>
             </form>

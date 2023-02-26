@@ -1,4 +1,4 @@
-function sendAjax (uri, method, data = null) {
+function sendAjax (uri, method, data = null, redirects = false) {
     event.preventDefault()
 
     $.ajax({
@@ -7,5 +7,8 @@ function sendAjax (uri, method, data = null) {
         'data': data
     })
 
-    location.reload()
+    if(!redirects) // reload to the current page
+        location.reload()
+    else // redirects to a page
+        location.href = redirects
 }
