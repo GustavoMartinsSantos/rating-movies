@@ -6,9 +6,47 @@ const userController = require('../Controller/userController')
 
 const getMovies = async (req, res) => {
     try {
-        return res.send('Olá filmes')
+        var link, results
+        var search    = req.query.search ?? ""
+        var page      = req.query.page ?? 1
+        var lists     = []
+        var favorites = []
+        
+        if(search != "") {
+            link = `https://api.themoviedb.org/3/search/multi?api_key=${process.env.API_KEY}&language=pt-BR&query=${search}&page=${page}`
+            results = await new API(link).request()
+            results = results.results
+
+            lists.push({ title: `Pesquisar por ${search}`,
+                         movies: results })
+        }
+
+        link = `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.API_KEY}&language=pt-BR&page=${page}`
+        results = await new API(link).request()
+        results = results.results
+
+        lists.push({ title: "Populares",
+                     movies: results })
+
+        if(req?.id != undefined) {
+            for(var c = 0; c < req.favorites.length; c++) {
+                link = `https://api.themoviedb.org/3/movie/${req.favorites[c].movieId}?api_key=${process.env.API_KEY}&language=pt-BR&page=${page}`
+                results = await new API(link).request()
+                
+                favorites.push(results)
+            }
+
+            lists.push({ title: "Lista de interesse",
+                        movies: favorites })
+        }
+
+        var jsScripts = ['jQuery.js']
+        var cssStyles = ['style.css']
+        var pageTitle = 'Rating Movies'
+
+        return res.render('main', { pageTitle, validator, req, search, lists, jsScripts, cssStyles })
     } catch (error) {
-        return res.send(error)
+        return res.send(error.stack)
     }
 }
 
@@ -16,6 +54,15 @@ const getMovie = async (req, res) => {
     try {
         const link = `https://api.themoviedb.org/3/movie/${req.params.movieId}?api_key=${process.env.API_KEY}&language=pt-BR`
         let movie = await new API(link).request()
+
+        if(!movie.title) {
+            const link = `https://api.themoviedb.org/3/tv/${req.params.movieId}?api_key=${process.env.API_KEY}&language=pt-BR`
+            movie = await new API(link).request()
+
+            movie.title = movie.name
+            movie.release_date = movie.first_air_date
+            movie.original_title = movie.original_name
+        }
         
         movie.critics = await Critics.find({ movieId: req.params.movieId })
 
@@ -23,16 +70,18 @@ const getMovie = async (req, res) => {
         var jsScripts = ['movie.js', 'jQuery.js']
         var pageTitle = movie.title
 
-        req.ratings.forEach(rating => {
-            if(rating.movieId == movie.id)
-                movie.rate = rating.value
-        });
+        if(req?.id != undefined) {
+            req.ratings.forEach(rating => {
+                if(rating.movieId == movie.id)
+                    movie.rate = rating.value
+            });
 
-        movie.avgRating = await Users.aggregate([
-            { $unwind: "$Ratings" },
-            { $match: { "Ratings.movieId": req.params.movieId }}, // aggregation where clause
-            { $group: { "_id": "$Ratings.movieId", "rate": { $avg: "$Ratings.value" }}}
-        ])
+            movie.avgRating = await Users.aggregate([
+                { $unwind: "$Ratings" },
+                { $match: { "Ratings.movieId": req.params.movieId }}, // aggregation where clause
+                { $group: { "_id": "$Ratings.movieId", "rate": { $avg: "$Ratings.value" }}}
+            ])
+        }
 
         movie.avgRating = movie.avgRating?.[0]?.rate
 
@@ -41,7 +90,7 @@ const getMovie = async (req, res) => {
 
         return res.render('movie', { movie, validator, req, pageTitle, cssStyles, jsScripts })
     } catch (error) {
-        return res.send(error)
+        return res.send(error.stack)
     }
 }
 
@@ -68,7 +117,8 @@ const rateMovie = async (req, res) => {
         const user = {
             id: req.id,
             firstName: req.firstName,
-            ratings: req.ratings
+            ratings: req.ratings,
+            favorites: req.favorites
         }
 
         if(req.Image != null)
@@ -88,7 +138,7 @@ const rateMovie = async (req, res) => {
         
         return res.redirect('http://localhost:3000/movie/' + req.params.movieId)
     } catch (error) {
-        return res.send(error)
+        return res.send(error.stack)
     }
 }
 

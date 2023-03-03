@@ -23,12 +23,12 @@ const register = async (req, res) => {
 
         user = await Users.create(user)
 
-        const token =  generateToken({id: user.id, firstName: user.firstName, Image: user.Image.name, ratings: user.Ratings})
+        const token =  generateToken({id: user.id, firstName: user.firstName, Image: user.Image.name, ratings: user, favorites: user.Favorites})
 
         return res.send({user, token})
     } catch (error) {
         console.log(error)
-        return res.status(400)
+        return res.status(400).send(error.stack)
     }
 }
 
@@ -51,7 +51,7 @@ const auth = async (req, res) => {
         if(!await bcrypt.compare(password, user.password))
             return res.status(400).send('Senha incorreta!')
             
-        const token = generateToken({id: user.id, firstName: user.firstName, Image: user.Image.name, ratings: user.Ratings})
+        const token = generateToken({id: user.id, firstName: user.firstName, Image: user.Image.name, ratings: user.Ratings, favorites: user.Favorites})
 
         res.cookie('auth', `Bearer ${token}`, {
             httpOnly: true,
@@ -83,7 +83,7 @@ const update = async (req, res) => {
         return res.send('Usuário atualizado com sucesso.')
     } catch (error) {
         console.log(error)
-        return res.status(400)
+        return res.status(400).send(error.stack)
     }
 }
 

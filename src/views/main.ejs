@@ -1,0 +1,49 @@
+    <%- include('./header.ejs') -%>
+    <body class="bg-dark">
+        <div class="container bg-info p-4">
+            <form method="GET" class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Pesquisar..." value="<%- validator(search) -%>">
+                <button class="btn bg-dark text-light input-group-addon" type="submit"><i class="bi bi-search"></i></button>
+            </form>
+
+            <% for(var c = 0; c < lists.length; c++) { %>
+            <div class="mt-3 bg-dark text-white rounded-top p-3"><h4><%- lists[c].title -%></h4></div>
+            <div class="carousel text-center bg-dark rounded-bottom">
+                <div id="scroll-<%- c -%>" class="carousel-inner d-flex">
+                    <% function getMovies (results) {
+                        results.forEach(function (result) {
+                            if(result.media_type == 'person') {
+                                getMovies(result.known_for)
+                            } else { %>
+                            
+                            <div onclick="location.href='http://localhost:3000/movie/<%- result.id -%>'" 
+                                class="carousel-item d-block p-2" 
+                                style="cursor: pointer; text-align: center; height: 340px; width: 20%; margin-right: 0">
+                                <img src="<%- result.poster_path ? `https://image.tmdb.org/t/p/w500${result.poster_path}` : 'IMG/movie.jpg' -%>" height="220px" width="150px" class="rounded-top">
+                                <div class="bg-info text-break rounded-bottom p-1" style="width: 150px; margin: 0 auto">
+                                    <%- result.title ?? result.name -%>
+                                </div>
+                            </div>
+                        <% }})
+                    } %>
+
+                    <%- getMovies(lists[c].movies) -%>
+                </div>
+
+                <% if (lists[c].movies.length > 0) { %>
+                <button class="carousel-control-prev" type="button" onclick="scrollPrev(<%- c -%>)">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                  
+                <button class="carousel-control-next" type="button" onclick="scrollNext(<%- c -%>)">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+                <% } %>
+            </div>
+            <% } %>
+        </div>
+        <script src="../views/JS/scroll.js"></script>
+    </body>
+</html>

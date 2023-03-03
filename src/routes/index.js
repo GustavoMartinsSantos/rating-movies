@@ -6,6 +6,7 @@ const userController   = require('../Controller/userController')
 const movieController  = require('../Controller/movieController')
 const criticController = require('../Controller/criticController')
 const commenController = require('../Controller/commenController')
+const optionalAuth = require('../Middlewares/optionalAuth')
 
 // user routes
 router.post('/register', userController.register)
@@ -13,8 +14,8 @@ router.get('/auth', userController.login)
 router.post('/auth', userController.auth)
 router.put('/user', auth, userController.update)
 
-router.get('/', movieController.getMovies) // movie routes
-router.get('/movie/:movieId', [auth, validateURL], movieController.getMovie)
+router.get('/', [optionalAuth], movieController.getMovies) // movie routes
+router.get('/movie/:movieId', [optionalAuth, validateURL], movieController.getMovie)
 router.post('/movie/:movieId', [auth, validateURL], movieController.rateMovie)
 
 // critic routes
