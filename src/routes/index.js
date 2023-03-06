@@ -14,7 +14,10 @@ router.get('/auth', userController.login)
 router.post('/auth', userController.auth)
 router.put('/user', auth, userController.update)
 
-router.get('/', [optionalAuth], movieController.getMovies) // movie routes
+// movie routes
+router.get('/', [optionalAuth], movieController.getMovies)
+router.post('/movie/:movieId/favorites', [auth, validateURL], movieController.addFavorites)
+router.post('/movie/:movieId/unfavorite', [auth, validateURL], movieController.removeFavorite)
 router.get('/movie/:movieId', [optionalAuth, validateURL], movieController.getMovie)
 router.post('/movie/:movieId', [auth, validateURL], movieController.rateMovie)
 

@@ -1,4 +1,4 @@
-function sendAjax (uri, method, data = null, redirects = false) {
+function sendAjax (uri, method = 'GET', data = null, redirects = false) {
     event.preventDefault()
 
     $.ajax({

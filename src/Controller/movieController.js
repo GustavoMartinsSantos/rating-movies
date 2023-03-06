@@ -36,8 +36,9 @@ const getMovies = async (req, res) => {
                 favorites.push(results)
             }
 
-            lists.push({ title: "Lista de interesse",
-                        movies: favorites })
+            if(req.favorites.length > 0)
+                lists.push({ title: "Lista de Relevância",
+                            movies: favorites })
         }
 
         var jsScripts = ['jQuery.js']
@@ -94,6 +95,77 @@ const getMovie = async (req, res) => {
     }
 }
 
+const addFavorites = async (req, res) => {
+    try {
+        var hasMovie = false
+        for(var c = 0; c < req.favorites.length; c++) {
+            if(req.favorites[c].movieId == req.params.movieId) {
+                hasMovie = true
+                break
+            }
+        }
+
+        if(!hasMovie) {
+            await Users.updateOne({ id: req.id }, { $push:{Favorites:{ movieId: req.params.movieId }} })
+            req.favorites.push({ movieId: req.params.movieId })
+
+            const user = {
+                id: req.id,
+                firstName: req.firstName,
+                ratings: req.ratings,
+                favorites: req.favorites
+            }
+    
+            if(req.Image != null)
+                user.Image = req.Image
+    
+            const token = userController.generateToken(user)
+    
+            res.cookie('auth', `Bearer ${token}`, {
+                httpOnly: true,
+                secure: true
+            })
+        }
+
+        return res.redirect('http://localhost:3000')
+    } catch (error) {
+        return res.send(error.stack)
+    }
+}
+
+const removeFavorite = async (req, res) => {
+    try {
+        var favorites = []
+        await Users.updateOne({ id: req.id }, { $pull:{Favorites:{ movieId: req.params.movieId }} })
+
+        req.favorites.forEach(function (fav) {
+            if(fav.movieId != req.params.movieId)
+                favorites.push(fav)
+        })
+
+        const user = {
+            id: req.id,
+            firstName: req.firstName,
+            ratings: req.ratings,
+            favorites: favorites
+        }
+
+        if(req.Image != null)
+            user.Image = req.Image
+
+        const token = userController.generateToken(user)
+
+        res.cookie('auth', `Bearer ${token}`, {
+            httpOnly: true,
+            secure: true
+        })
+
+        return res.redirect('http://localhost:3000')
+    } catch (error) {
+        return res.send(error.stack)
+    }
+}
+
 const rateMovie = async (req, res) => {
     try { // update user and generates a new token
         const { rate } = req.body
@@ -145,5 +217,7 @@ const rateMovie = async (req, res) => {
 module.exports = {
     getMovies,
     getMovie,
+    addFavorites,
+    removeFavorite,
     rateMovie
 }
