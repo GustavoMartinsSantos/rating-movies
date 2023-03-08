@@ -8,12 +8,11 @@ const getMovies = async (req, res) => {
     try {
         var link, results
         var search    = req.query.search ?? ""
-        var page      = req.query.page ?? 1
         var lists     = []
         var favorites = []
         
         if(search != "") {
-            link = `https://api.themoviedb.org/3/search/multi?api_key=${process.env.API_KEY}&language=pt-BR&query=${search}&page=${page}`
+            link = `https://api.themoviedb.org/3/search/multi?api_key=${process.env.API_KEY}&language=pt-BR&query=${search}&page=1`
             results = await new API(link).request()
             results = results.results
 
@@ -21,18 +20,54 @@ const getMovies = async (req, res) => {
                          movies: results })
         }
 
-        link = `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.API_KEY}&language=pt-BR&page=${page}`
+        link = `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.API_KEY}&language=pt-BR&page=1`
         results = await new API(link).request()
         results = results.results
 
         lists.push({ title: "Populares",
                      movies: results })
 
+        link = `https://api.themoviedb.org/3/movie/top_rated?api_key=${process.env.API_KEY}&language=pt-BR&page=1`
+        results = await new API(link).request()
+        results = results.results
+
+        var topRatedMovies = await Users.aggregate([
+            { $unwind: "$Ratings" }, // get only movies that has ratings equal or above 8
+            { $match: { "Ratings.value": { $gte: 8 } }},
+            { $group: { "_id": "$Ratings.movieId", "rate": { $avg: "$Ratings.value" }}}
+        ])
+
+        for(var i = 0; i < topRatedMovies.length; i++) {
+            link = `https://api.themoviedb.org/3/movie/${topRatedMovies[i]._id}?api_key=${process.env.API_KEY}&language=pt-BR`
+            movie = await new API(link).request()
+
+            if(!movie.title) {
+                link = `https://api.themoviedb.org/3/tv/${topRatedMovies[i]._id}?api_key=${process.env.API_KEY}&language=pt-BR`
+                movie = await new API(link).request()
+            }
+
+            movie.vote_average = topRatedMovies[i].rate
+            
+            results.push(movie)
+        }
+
+        results.sort(function (a, b) {
+            return b.vote_average - a.vote_average
+        }) // goes from the best rated movies to the lowest rating ones
+
+        lists.push({ title: "Mais bem avaliados",
+                     movies: results })
+
         if(req?.id != undefined) {
             for(var c = 0; c < req.favorites.length; c++) {
-                link = `https://api.themoviedb.org/3/movie/${req.favorites[c].movieId}?api_key=${process.env.API_KEY}&language=pt-BR&page=${page}`
+                link = `https://api.themoviedb.org/3/movie/${req.favorites[c].movieId}?api_key=${process.env.API_KEY}&language=pt-BR&page=1`
                 results = await new API(link).request()
                 
+                if(!results.title) {
+                    link = `https://api.themoviedb.org/3/tv/${req.favorites[c].movieId}?api_key=${process.env.API_KEY}&language=pt-BR`
+                    results = await new API(link).request()
+                }
+
                 favorites.push(results)
             }
 
@@ -41,11 +76,17 @@ const getMovies = async (req, res) => {
                             movies: favorites })
         }
 
-        var jsScripts = ['jQuery.js']
+        link = `https://api.themoviedb.org/3/movie/upcoming?api_key=${process.env.API_KEY}&language=pt-BR&page=1`
+        results = await new API(link).request()
+        results = results.results
+
+        lists.push({ title: "Em exibição / Em breve",
+                     movies: results })
+
         var cssStyles = ['style.css']
         var pageTitle = 'Rating Movies'
 
-        return res.render('main', { pageTitle, validator, req, search, lists, jsScripts, cssStyles })
+        return res.render('main', { pageTitle, validator, req, search, lists, cssStyles })
     } catch (error) {
         return res.send(error.stack)
     }

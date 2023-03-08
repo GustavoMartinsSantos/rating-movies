@@ -1,5 +1,4 @@
-var scrollPosition = 0
-var scrollPosition = [0,0,0]
+var scrollPosition = [0,0,0,0,0]
 var cardWidth = $('.carousel-item').width()
 var carouselWidth = $('.carousel-inner')[0].scrollWidth
 

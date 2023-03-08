@@ -20,9 +20,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 mongoose.set("strictQuery", true);
 
-mongoose.connect(
-    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.zifjrp5.mongodb.net/rating-movies`
-).then(()=> {
+mongoose.connect(process.env.DB_SERVER).then(()=> {
     app.listen(3000)
 }).catch((err) => console.log(err))
 

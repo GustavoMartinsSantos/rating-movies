@@ -19,7 +19,7 @@
                             <div class="carousel-item d-block p-2" 
                                 style="cursor: pointer; text-align: center; height: 340px; width: 20%; margin-right: 0">
                                 
-                                <form method="POST" action="<%- lists[c].title != `Lista de Relevância` ? `./movie/${result.id}/favorites` : `./movie/${result.id}/unfavorite` -%>" style="position: absolute; <%- results.length <= 5 ? `margin-left: 15%` : null -%>">
+                                <form method="POST" action="<%- lists[c].title != `Lista de Relevância` ? `./movie/${result.id}/favorites` : `./movie/${result.id}/unfavorite` -%>" style="position: absolute; <%- lists[c].movies.length <= 5 ? `margin-left: 15%` : null -%>">
                                     <i class="bi <%- lists[c].title != `Lista de Relevância` ? `bi-plus` : `bi-x` -%> rounded-bottom p-1 text-white bg-dark"
                                         onclick="this.closest('form').submit()">
                                     </i>
@@ -30,6 +30,12 @@
                                 
                                     <div class="bg-info text-break rounded-bottom p-1" style="width: 150px; margin: 0 auto">
                                         <%- result.title ?? result.name -%>
+
+                                        <% if(lists[c].title == "Mais bem avaliados") { %><br>
+                                        <i class="bi bi-star-fill text-center" style="color:rgb(0, 0, 0);">
+                                            <%- result.vote_average.toFixed(1) -%>
+                                        </i>
+                                        <% } %>
                                     </div>
                                 </span>
                             </div>
