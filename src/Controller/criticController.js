@@ -1,6 +1,7 @@
-const Critics = require('../Model/Critics')
+const Critics  = require('../Model/Critics')
 const API = require('../Model/API')
 const { ObjectId } = require('mongodb');
+const commentController = require('../Controller/commenController')
 
 const create = async (req, res) => {
     try {
@@ -79,9 +80,30 @@ const update = async (req, res) => {
     }
 }
 
+const remove = async (req, res) => {
+    try {
+        if(!ObjectId.isValid(req.params.criticId))
+            return res.status(404).send('Crítica inválida!')
+
+        let critic = await Critics.findOne({$and: [{ _id: req.params.criticId}, {User: req.id }]})
+        // user has not authorization
+        if(critic == null)
+            return res.status(403).send('Usuário não possui permissão!') 
+
+        critic.Comments.forEach(async function (comment) {
+            await commentController.remove(comment)
+        })
+
+        await Critics.deleteOne({ _id: req.params.criticId })
+    } catch(error) {
+        return res.send(error)
+    }
+}
+
 module.exports = {
     create,
     add,
     show,
-    update
+    update,
+    remove
 }

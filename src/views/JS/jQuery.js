@@ -12,3 +12,10 @@ function sendAjax (uri, method = 'GET', data = null, redirects = false) {
     else // redirects to a page
         location.href = redirects
 }
+
+function updateDeleteModal (link, title) {
+    var onclick = `sendAjax('${link}', 'DELETE')`
+
+    $('#modalTitle').replaceWith(`<p>${title}</p>`)
+    $('#confirmDeleteBtn').attr('onclick', onclick)
+}

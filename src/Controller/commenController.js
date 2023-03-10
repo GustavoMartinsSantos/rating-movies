@@ -76,9 +76,18 @@ const like = async(req, res) => {
     }
 }
 
+const remove = async (comment) => {
+    comment.Replies.forEach(async function (reply) {
+        await remove(reply)
+    });
+
+    return await Comments.deleteOne(comment._id)
+}
+
 module.exports = {
     add,
     update,
     addReply,
-    like
+    like,
+    remove
 }

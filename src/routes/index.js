@@ -26,11 +26,13 @@ router.get('/movie/:movieId/critic/', [auth, validateURL], criticController.crea
 router.post('/movie/:movieId/critic/', [auth, validateURL], criticController.add)
 router.get('/movie/:movieId/critic/:criticId', [auth, validateURL], criticController.show)
 router.put('/movie/:movieId/critic/:criticId', [auth, validateURL], criticController.update)
+router.delete('/movie/:movieId/critic/:criticId', [auth, validateURL], criticController.remove)
 
 // comment routes
 router.post('/movie/:movieId/critic/:criticId/comment', auth, commenController.add)
 router.patch('/movie/:movieId/critic/:criticId/comment/:commentId', auth, commenController.update)
 router.post('/movie/:movieId/critic/:criticId/comment/:parentCommentId', auth, commenController.addReply)
 router.get('/movie/:movieId/critic/:criticId/comment/:commentId/like', auth, commenController.like)
+router.delete('/movie/:movieId/critic/:criticId/comment/:commentId', auth, commenController.remove)
 
 module.exports = router
