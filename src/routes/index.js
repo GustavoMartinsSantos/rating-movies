@@ -33,6 +33,6 @@ router.post('/movie/:movieId/critic/:criticId/comment', auth, commenController.a
 router.patch('/movie/:movieId/critic/:criticId/comment/:commentId', auth, commenController.update)
 router.post('/movie/:movieId/critic/:criticId/comment/:parentCommentId', auth, commenController.addReply)
 router.get('/movie/:movieId/critic/:criticId/comment/:commentId/like', auth, commenController.like)
-router.delete('/movie/:movieId/critic/:criticId/comment/:commentId', auth, commenController.remove)
+router.delete('/movie/:movieId/critic/:criticId/comment/:commentId', auth, commenController.deleteComment)
 
 module.exports = router

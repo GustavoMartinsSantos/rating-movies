@@ -6,10 +6,10 @@ const userController = require('../Controller/userController')
 
 const getMovies = async (req, res) => {
     try {
-        var link, results
-        var search    = req.query.search ?? ""
-        var lists     = []
-        var favorites = []
+        let link, results, topRatedMovies
+        let search    = req.query.search ?? ""
+        let lists     = []
+        let favorites = []
         
         if(search != "") {
             link = `https://api.themoviedb.org/3/search/multi?api_key=${process.env.API_KEY}&language=pt-BR&query=${search}&page=1`
@@ -31,13 +31,13 @@ const getMovies = async (req, res) => {
         results = await new API(link).request()
         results = results.results
 
-        var topRatedMovies = await Users.aggregate([
+        topRatedMovies = await Users.aggregate([
             { $unwind: "$Ratings" }, // get only movies that has ratings equal or above 8
             { $match: { "Ratings.value": { $gte: 8 } }},
             { $group: { "_id": "$Ratings.movieId", "rate": { $avg: "$Ratings.value" }}}
         ])
 
-        for(var i = 0; i < topRatedMovies.length; i++) {
+        for(let i = 0; i < topRatedMovies.length; i++) {
             link = `https://api.themoviedb.org/3/movie/${topRatedMovies[i]._id}?api_key=${process.env.API_KEY}&language=pt-BR`
             movie = await new API(link).request()
 
@@ -59,7 +59,7 @@ const getMovies = async (req, res) => {
                      movies: results })
 
         if(req?.id != undefined) {
-            for(var c = 0; c < req.favorites.length; c++) {
+            for(let c = 0; c < req.favorites.length; c++) {
                 link = `https://api.themoviedb.org/3/movie/${req.favorites[c].movieId}?api_key=${process.env.API_KEY}&language=pt-BR&page=1`
                 results = await new API(link).request()
                 
@@ -83,8 +83,8 @@ const getMovies = async (req, res) => {
         lists.push({ title: "Em exibição / Em breve",
                      movies: results })
 
-        var cssStyles = ['style.css']
-        var pageTitle = 'Rating Movies'
+        let cssStyles = ['style.css']
+        let pageTitle = 'Rating Movies'
 
         return res.render('main', { pageTitle, validator, req, search, lists, cssStyles })
     } catch (error) {
@@ -108,9 +108,9 @@ const getMovie = async (req, res) => {
         
         movie.critics = await Critics.find({ movieId: req.params.movieId })
 
-        var cssStyles = ['movie.css']
-        var jsScripts = ['movie.js', 'jQuery.js']
-        var pageTitle = movie.title
+        let cssStyles = ['movie.css']
+        let jsScripts = ['movie.js', 'jQuery.js']
+        let pageTitle = movie.title
 
         if(req?.id != undefined) {
             req.ratings.forEach(rating => {
@@ -138,8 +138,8 @@ const getMovie = async (req, res) => {
 
 const addFavorites = async (req, res) => {
     try {
-        var hasMovie = false
-        for(var c = 0; c < req.favorites.length; c++) {
+        let hasMovie = false
+        for(let c = 0; c < req.favorites.length; c++) {
             if(req.favorites[c].movieId == req.params.movieId) {
                 hasMovie = true
                 break
@@ -176,7 +176,7 @@ const addFavorites = async (req, res) => {
 
 const removeFavorite = async (req, res) => {
     try {
-        var favorites = []
+        let favorites = []
         await Users.updateOne({ id: req.id }, { $pull:{Favorites:{ movieId: req.params.movieId }} })
 
         req.favorites.forEach(function (fav) {
@@ -210,12 +210,12 @@ const removeFavorite = async (req, res) => {
 const rateMovie = async (req, res) => {
     try { // update user and generates a new token
         const { rate } = req.body
-        var newRate = true
+        let newRate = true
 
         if(!rate)
             return res.status(400).send('Elementos POST não enviados!')
 
-        for(var i = 0; i < req.ratings.length; i++) {
+        for(let i = 0; i < req.ratings.length; i++) {
             if(req.ratings[i].movieId == req.params.movieId) {
                 req.ratings[i].value = rate
 
