@@ -1,0 +1,13 @@
+#image {
+    width: 130px;
+    height: 130px;
+}
+
+#fileInput {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    width: 130px;
+    height: 130px;
+    transform: translateX(-100%);
+}

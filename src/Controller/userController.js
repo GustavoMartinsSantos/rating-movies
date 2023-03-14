@@ -8,6 +8,14 @@ function generateToken (params = {}) {
     })
 }
 
+const create = async (req, res) => {
+    let jsScripts = ['user.js']
+    let cssStyles = ['user.css']
+    let pageTitle = 'Cadastrar-se'
+
+    return res.render('register', { pageTitle, cssStyles, jsScripts })
+}
+
 const register = async (req, res) => {
     try {
         const { firstName, lastName, email, password, Image } = req.body
@@ -91,6 +99,7 @@ const update = async (req, res) => {
 }
 
 module.exports = {
+    create,
     register,
     auth,
     login,

@@ -1,0 +1,27 @@
+    <%- include('./header.ejs') -%>
+    <body class="bg-dark">
+        <form enctype="multipart/form-data" method="POST"
+            class="form-control container bg-primary text-white p-4" style="margin-top: 3%; width: 400px;">
+            <h2 class="text-center" style="font-family: Berlin Sans FB; margin-bottom: 20px">Cadastrar nova conta</h2>
+
+            <div class="text-center">
+                <img src="../IMG/user.jpg" id="image" class="rounded-circle" alt="Imagem de Perfil" onclick="imagePreview()">
+                <input id="fileInput" type="file" class="" accept="image/*" name="image" onchange="imagePrev()">
+            </div>
+
+            <label class="form-label">Nome completo</label>
+            <input type="text" name="name" class="form-control mb-3" required>
+            
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control mb-3" required>
+
+            <label class="form-label">Senha</label>
+            <input type="text" name="passwd" class="form-control mb-3" required>
+
+            <label class="form-label">Confirmar Senha</label>
+            <input id="confPasswd" type="password" class="form-control mb-3" required onblur="confPassword()">
+
+            <input type="submit" class="form-control border-0 text-white float-right btn bg-danger" value="Cadastrar-se">
+        </form>
+    </body>
+</html>

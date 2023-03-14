@@ -9,6 +9,7 @@ const commenController = require('../Controller/commenController')
 const optionalAuth = require('../Middlewares/optionalAuth')
 
 // user routes
+router.get('/register', userController.create)
 router.post('/register', userController.register)
 router.get('/auth', userController.login)
 router.post('/auth', userController.auth)
