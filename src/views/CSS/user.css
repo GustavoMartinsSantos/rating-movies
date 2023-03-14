@@ -1,3 +1,13 @@
+.title {
+    font-family: Berlin Sans FB; 
+    margin-bottom: 20px
+}
+
+#registerForm {
+    margin-top: 3%; 
+    width: 400px;
+}
+
 #image {
     width: 130px;
     height: 130px;
