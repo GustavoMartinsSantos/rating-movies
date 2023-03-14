@@ -33,7 +33,10 @@ const register = async (req, res) => {
 }
 
 const login = async (req, res) => {
-    return res.render('login')
+    let cssStyles = ['login.css']
+    let pageTitle = 'Entrar'
+
+    return res.render('login', { pageTitle, cssStyles })
 }
 
 const auth = async (req, res) => {
