@@ -1,8 +1,14 @@
     <%- include('./header.ejs') -%>
     <body class="bg-dark">
-        <form enctype="multipart/form-data" method="POST" 
+        <form method="POST" enctype="multipart/form-data"
         id="registerForm" class="form-control container bg-primary text-white p-4">
             <h2 class="title text-center">Cadastrar nova conta</h2>
+
+            <% if(typeof error !== 'undefined') { %>
+                <div class="alert alert-danger text-center">
+                    Email já cadastrado!
+                </div>
+            <% } %>
 
             <div class="text-center">
                 <img src="../IMG/user.jpg" id="image" class="rounded-circle" alt="Imagem de Perfil" onclick="imagePreview()">
@@ -16,7 +22,7 @@
             <input type="email" name="email" class="form-control mb-3" required>
 
             <label class="form-label">Senha</label>
-            <input type="text" name="passwd" class="form-control mb-3" required>
+            <input type="text" name="passwd" class="form-control mb-3" minlength="8" required>
 
             <label class="form-label">Confirmar Senha</label>
             <input id="confPasswd" type="password" class="form-control mb-3" required onblur="confPassword()">

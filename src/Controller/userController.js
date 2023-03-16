@@ -1,6 +1,6 @@
-const JWT = require('jsonwebtoken')
+const JWT    = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
-const Users = require('../Model/Users')
+const Users  = require('../Model/Users')
 
 function generateToken (params = {}) {
     return JWT.sign(params, process.env.SECRET, {
@@ -13,27 +13,47 @@ const create = async (req, res) => {
     let cssStyles = ['user.css']
     let pageTitle = 'Cadastrar-se'
 
-    return res.render('register', { pageTitle, cssStyles, jsScripts })
+    return res.render('register', { pageTitle, cssStyles, jsScripts, error: req?.error })
 }
 
 const register = async (req, res) => {
     try {
-        const { firstName, lastName, email, password, Image } = req.body
-        var user = {
-            firstName, lastName, email, password, Image
+        const { name, email, passwd } = req.body
+        let error
+        
+        if(!name || !email || !passwd)
+            error = 'Elementos POST não enviados!'
+        
+        let names = name.trim().replace(/  +/g, ' ')
+
+        let user = {
+            firstName: names.substring(0, names.indexOf(' ')), 
+            lastName: names.substring(names.indexOf(' ')+1),
+            email,
+            password: passwd
         }
 
-        if(!firstName || !lastName || !email || !password)
-            res.status(400).send('Elementos POST não enviados!')
+        if(req?.file?.filename)
+            user['Image'] = { name: req.file.filename }
 
         if(await Users.findOne({email}))
-            return res.status(400).send({error: 'Email já cadastrado!'});
+            error = 'Email já cadastrado!'
+
+        if(error != null) {
+            req.error = error
+            return create(req, res)
+        }
 
         user = await Users.create(user)
 
         const token =  generateToken({id: user.id, firstName: user.firstName, Image: user.Image.name, ratings: user, favorites: user.Favorites})
 
-        return res.send({user, token})
+        res.cookie('auth', `Bearer ${token}`, {
+            httpOnly: true,
+            secure: true
+        })
+
+        return res.redirect('http://localhost:3000')
     } catch (error) {
         console.log(error)
         return res.status(400).send(error.stack)
