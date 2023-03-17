@@ -23,7 +23,7 @@ const register = async (req, res) => {
         
         if(!name || !email || !passwd)
             error = 'Elementos POST não enviados!'
-        
+
         let names = name.trim().replace(/  +/g, ' ')
 
         let user = {

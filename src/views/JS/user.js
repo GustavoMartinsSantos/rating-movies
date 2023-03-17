@@ -20,3 +20,13 @@ function confPassword () {
     else
         confPasswd.setCustomValidity('')
 }
+
+function checkEmail () {
+    event.preventDefault()
+    let form  = document.getElementById('registerForm')
+    let email = document.querySelector('input[name=email]').value
+
+    form.setAttribute('action', `./register?email=${encodeURIComponent(email)}`)
+
+    form.submit()
+}

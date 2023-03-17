@@ -1,12 +1,13 @@
     <%- include('./header.ejs') -%>
     <body class="bg-dark">
-        <form method="POST" enctype="multipart/form-data"
-        id="registerForm" class="form-control container bg-primary text-white p-4">
+        <form id="registerForm" method="POST" enctype="multipart/form-data"
+        action="./register?email="
+        class="form-control container bg-primary text-white p-4">
             <h2 class="title text-center">Cadastrar nova conta</h2>
 
             <% if(typeof error !== 'undefined') { %>
-                <div class="alert alert-danger text-center">
-                    Email já cadastrado!
+                <div class="alert alert-danger">
+                    <%- error -%>
                 </div>
             <% } %>
 
@@ -27,7 +28,7 @@
             <label class="form-label">Confirmar Senha</label>
             <input id="confPasswd" type="password" class="form-control mb-3" required onblur="confPassword()">
 
-            <input type="submit" class="form-control border-0 text-white float-right btn bg-danger" value="Cadastrar-se">
+            <input type="submit" onclick="checkEmail(this)" class="form-control border-0 text-white float-right btn bg-danger" value="Cadastrar-se">
         </form>
     </body>
 </html>
