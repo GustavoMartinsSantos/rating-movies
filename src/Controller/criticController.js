@@ -1,16 +1,18 @@
-const Critics  = require('../Model/Critics')
 const API = require('../Model/API')
 const { ObjectId } = require('mongodb');
+const Critics  = require('../Model/Critics')
 const commentController = require('../Controller/commenController')
 
 const create = async (req, res) => {
     try {
-        var pageTitle = 'Avaliar Filme'
+        let pageTitle = 'Avaliar Filme'
+        let cssStyles = ['navbar.css']
+        let jsScripts = ['navbar.js']
 
         const link = `https://api.themoviedb.org/3/movie/${req.params.movieId}?api_key=${process.env.API_KEY}&language=pt-BR`
         let movie = await new API(link).request()
 
-        return res.render('critic', { pageTitle, movie })
+        return res.render('critic', { pageTitle, req, dir: "../../", cssStyles, jsScripts, movie })
     } catch(error) {
         return res.send(error)
     }
@@ -40,8 +42,9 @@ const add = async (req, res) => {
 
 const show = async (req, res) => {    
     try {
-        var pageTitle = 'Editar Avaliação'
-        var jsScripts = ['jQuery.js']
+        let pageTitle = 'Editar Avaliação'
+        let cssStyles = ['navbar.css']
+        let jsScripts = ['jQuery.js', 'navbar.js']
 
         const link = `https://api.themoviedb.org/3/movie/${req.params.movieId}?api_key=${process.env.API_KEY}&language=pt-BR`
         let movie = await new API(link).request()
@@ -54,7 +57,7 @@ const show = async (req, res) => {
         if(critic == null)
             return res.redirect('http://localhost:3000/movie/' + req.params.movieId)
         
-        return res.render('critic', { pageTitle, movie, critic, jsScripts })
+        return res.render('critic', { pageTitle, req, dir: '../../../', cssStyles, jsScripts, movie, critic })
     } catch(error) {
         return res.send(error)
     }

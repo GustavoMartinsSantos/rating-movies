@@ -1,0 +1,22 @@
+.user-section {
+    display: none;
+}
+
+.user-section.open {
+    display: block;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: white;
+    font-size: 14pt;
+    width: 262px;
+}
+
+.user-section i {
+    font-size: 16pt
+}
+
+.user-item:hover {
+    background-color: gray;
+}

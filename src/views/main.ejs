@@ -1,14 +1,10 @@
     <%- include('./header.ejs') -%>
+    <%- include('./navbar.ejs') -%>
     <body class="bg-dark">
-        <div class="container bg-info p-4">
-            <form method="GET" class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Pesquisar..." value="<%- validator(search) -%>">
-                <button class="btn bg-dark text-light input-group-addon" type="submit"><i class="bi bi-search"></i></button>
-            </form>
-
+        <div class="container rounded-top bg-info p-4">
             <% for(var c = 0; c < lists.length; c++) { %>
-            <div class="mt-3 bg-dark text-white rounded-top p-3"><h4><%- lists[c].title -%></h4></div>
-            <div class="carousel text-center bg-dark rounded-bottom">
+            <div class="mt-5 bg-dark text-white rounded-top p-3"><h4><%- lists[c].title -%></h4></div>
+            <div class="mb-3 carousel text-center bg-dark rounded-bottom">
                 <div id="scroll-<%- c -%>" class="carousel-inner d-flex">
                     <% function getMovies (results) {
                         results.forEach(function (result) {

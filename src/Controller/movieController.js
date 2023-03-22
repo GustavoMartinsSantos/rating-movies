@@ -83,10 +83,11 @@ const getMovies = async (req, res) => {
         lists.push({ title: "Em exibição / Em breve",
                      movies: results })
 
-        let cssStyles = ['style.css']
+        let cssStyles = ['style.css', 'navbar.css']
+        let jsScripts = ['navbar.js']
         let pageTitle = 'Rating Movies'
 
-        return res.render('main', { pageTitle, validator, req, search, lists, cssStyles })
+        return res.render('main', { pageTitle, validator, req, search, lists, jsScripts, cssStyles })
     } catch (error) {
         return res.send(error.stack)
     }
@@ -108,10 +109,6 @@ const getMovie = async (req, res) => {
         
         movie.critics = await Critics.find({ movieId: req.params.movieId })
 
-        let cssStyles = ['movie.css']
-        let jsScripts = ['movie.js', 'jQuery.js']
-        let pageTitle = movie.title
-
         if(req?.id != undefined) {
             req.ratings.forEach(rating => {
                 if(rating.movieId == movie.id)
@@ -129,6 +126,10 @@ const getMovie = async (req, res) => {
 
         if(movie.avgRating == null)
             movie.avgRating = movie.vote_average
+    
+        let cssStyles = ['movie.css', 'navbar.css']
+        let jsScripts = ['movie.js', 'jQuery.js', 'navbar.js']
+        let pageTitle = movie.title
 
         return res.render('movie', { movie, validator, req, pageTitle, cssStyles, jsScripts })
     } catch (error) {
@@ -234,8 +235,8 @@ const rateMovie = async (req, res) => {
             favorites: req.favorites
         }
 
-        if(req.Image != null)
-            user.Image = req.Image
+        if(req.image != null)
+            user.Image = req.image
 
         const token = userController.generateToken(user)
 

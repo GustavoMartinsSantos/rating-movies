@@ -1,0 +1,70 @@
+<nav class="navbar bg-info p-2 fixed-top">
+    <div class="float-left">
+        <a href="/" style="color: black;">
+            <img src="<%- (typeof dir != 'undefined') ? dir : '../' -%>IMG/logo.png" width="50px" height="50px">
+            <h2 class="align-middle" style="font-family: Berlin Sans FB; display: inline">
+                Rating Movies
+            </h2>
+        </a>
+    </div>
+
+    <% if (pageTitle == 'Rating Movies') { %>
+    <form method="GET" class="input-group w-50" style="">
+        <input type="text" name="search" class="form-control" placeholder="Pesquisar..." value="<%- validator(search) -%>">
+        <button class="btn bg-dark text-light input-group-addon" type="submit"><i class="bi bi-search"></i></button>
+    </form>
+    <% } %>
+
+    <div class="float-right">
+        <span class="align-middle" style="font-family: Berlin Sans FB; font-size: 32px">
+            Olá, <%- (req.id != null) ? req.firstName : 'seja bem-vindo' -%>
+        </span>
+
+        <img src="<%- (typeof dir != 'undefined') ? dir : '../' -%>IMG/<%- req.image ?? 'user.jpg' -%>" 
+        class="rounded-circle mx-2" width="50px" height="50px" 
+        style="cursor: pointer" onclick="toogleMenu()">
+    </div>
+
+    <div class="bg-dark text-white p-2 rounded user-section" style="position: absolute; top: 2%; right: 10px">
+        <span class="align-middle" style="font-family: Berlin Sans FB; font-size: 32px">
+            Olá, <%- (req.id != null) ? req.firstName : 'seja bem-vindo' -%>
+        </span>
+        <img src="<%- (typeof dir != 'undefined') ? dir : '../' -%>IMG/<%- req.image ?? 'user.jpg' -%>" 
+        class="rounded-circle mx-2" width="50px" height="50px"
+        style="cursor: pointer" onclick="toogleMenu()">
+        <hr>
+
+        <% if (req.id == null) { %>
+            <a href="./auth">
+                <div class="mb-1 user-item">
+                    <i class="bi bi-box-arrow-in-right mx-2"></i>
+                    Login
+                </div>
+            </a>
+        <% } %>
+
+        <% if (req.id != null) { %>
+            <a href="#">
+                <div class="mb-1 user-item">        
+                    <i class="bi bi-person-lines-fill mx-2"></i>
+                    Meus Dados
+                </div>
+            </a>
+
+            <a href="#">
+                <div class="mb-1 user-item">        
+                    <i class="bi bi-list-stars mx-2"></i>
+                    Minhas avaliações
+                </div>
+            </a>
+
+            <a href="./logout">
+                <div class="mx-2 user-item">
+                    <i class="bi bi-box-arrow-in-left mx-1"></i>
+                    Logout
+                    </a>
+                </div>
+            </a>
+        <% } %>
+    </div>
+</nav>
