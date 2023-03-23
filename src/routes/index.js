@@ -13,9 +13,11 @@ const multerConfig     = require('../Middlewares/multer')
 // user routes
 router.get('/register', userController.create)
 router.post('/register', multer(multerConfig).single('image'), userController.register)
+router.get('/edit-profile', auth, userController.show)
+router.put('/edit-profile', [auth, multer(multerConfig).single('image')], userController.update)
 router.get('/auth', userController.login)
 router.post('/auth', userController.auth)
-router.put('/user', auth, userController.update)
+router.get('/logout', userController.logout)
 
 // movie routes
 router.get('/', [optionalAuth], movieController.getMovies)

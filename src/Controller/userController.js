@@ -46,7 +46,7 @@ const register = async (req, res) => {
 
         user = await Users.create(user)
 
-        const token =  generateToken({id: user.id, firstName: user.firstName, Image: user.Image.name, ratings: user, favorites: user.Favorites})
+        const token = generateToken({id: user.id, firstName: user.firstName, Image: user.Image.name, ratings: user, favorites: user.Favorites})
 
         res.cookie('auth', `Bearer ${token}`, {
             httpOnly: true,
@@ -96,8 +96,34 @@ const auth = async (req, res) => {
     }
 }
 
+const logout = async (req, res) => {
+    try {
+        res.clearCookie('auth')
+
+        return res.redirect('http://localhost:3000/auth')
+    } catch (error) {
+        console.log(error)
+        return res.status(400).send(error.stack)
+    }
+}
+
+const show = async (req, res) => {
+    try {
+        let jsScripts = ['user.js']
+        let cssStyles = ['user.css']
+        let pageTitle = 'Editar'
+
+        return res.render('register', { pageTitle, cssStyles, jsScripts, error: req?.error })
+    } catch (error) {
+        console.log(error)
+        return res.status(400).send(error.stack)
+    }
+}
+
 const update = async (req, res) => {
     try {
+        return res.send('teste')
+
         const { firstName, lastName, Image } = req.body
 
         const userData = {
@@ -123,6 +149,8 @@ module.exports = {
     register,
     auth,
     login,
+    logout,
+    show,
     update,
     generateToken
 }

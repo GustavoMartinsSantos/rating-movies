@@ -35,7 +35,7 @@
         <hr>
 
         <% if (req.id == null) { %>
-            <a href="./auth">
+            <a href="/auth">
                 <div class="mb-1 user-item">
                     <i class="bi bi-box-arrow-in-right mx-2"></i>
                     Login
@@ -44,7 +44,7 @@
         <% } %>
 
         <% if (req.id != null) { %>
-            <a href="#">
+            <a href="/edit-profile">
                 <div class="mb-1 user-item">        
                     <i class="bi bi-person-lines-fill mx-2"></i>
                     Meus Dados
