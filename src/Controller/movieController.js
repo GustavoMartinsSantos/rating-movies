@@ -58,7 +58,7 @@ const getMovies = async (req, res) => {
         lists.push({ title: "Mais bem avaliados",
                      movies: results })
 
-        if(req?.id != undefined) {
+        if(req?.favorites != undefined) {
             for(let c = 0; c < req.favorites.length; c++) {
                 link = `https://api.themoviedb.org/3/movie/${req.favorites[c].movieId}?api_key=${process.env.API_KEY}&language=pt-BR&page=1`
                 results = await new API(link).request()
@@ -110,7 +110,7 @@ const getMovie = async (req, res) => {
         movie.critics = await Critics.find({ movieId: req.params.movieId })
 
         if(req?.id != undefined) {
-            req.ratings.forEach(rating => {
+            req?.ratings?.forEach(rating => {
                 if(rating.movieId == movie.id)
                     movie.rate = rating.value
             });

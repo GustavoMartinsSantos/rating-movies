@@ -16,17 +16,17 @@ function confPassword () {
     let confPasswd = document.getElementById('confPasswd')
 
     if(passwd != confPasswd.value)
-        confPasswd.setCustomValidity('As senhas não conferem');
+        confPasswd.setCustomValidity('As senhas não conferem')
     else
         confPasswd.setCustomValidity('')
 }
 
 function checkEmail () {
     event.preventDefault()
-    let form  = document.getElementById('registerForm')
-    let email = document.querySelector('input[name=email]').value
+    let form   = document.getElementById('registerForm')
+    let email  = document.querySelector('input[name=email]')
 
-    form.setAttribute('action', `./register?email=${encodeURIComponent(email)}`)
+    form.setAttribute('action', `./register?email=${encodeURIComponent(email.value)}`)
 
     form.submit()
 }

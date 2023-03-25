@@ -1,6 +1,7 @@
 const JWT    = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const Users  = require('../Model/Users')
+const fs = require('fs')
 
 function generateToken (params = {}) {
     return JWT.sign(params, process.env.SECRET, {
@@ -46,7 +47,7 @@ const register = async (req, res) => {
 
         user = await Users.create(user)
 
-        const token = generateToken({id: user.id, firstName: user.firstName, Image: user.Image.name, ratings: user, favorites: user.Favorites})
+        const token = generateToken({id: user.id, firstName: user.firstName, Image: user.Image.name, ratings: user.Ratings, favorites: user.Favorites})
 
         res.cookie('auth', `Bearer ${token}`, {
             httpOnly: true,
@@ -64,23 +65,26 @@ const login = async (req, res) => {
     let cssStyles = ['login.css']
     let pageTitle = 'Entrar'
 
-    return res.render('login', { pageTitle, cssStyles })
+    return res.render('login', { pageTitle, cssStyles, error: req?.error })
 }
 
 const auth = async (req, res) => {
     try {
         const { email, password } = req.body
-    
+        let error
+
         if(!email || !password)
-            return res.status(400).send('Elementos POST não enviados!')
+            error = 'Elementos POST não enviados!'
 
         const user = await Users.findOne({email})
 
-        if(!user)
-            return res.status(400).send('Email incorreto!')
-
-        if(!await bcrypt.compare(password, user.password))
-            return res.status(400).send('Senha incorreta!')
+        if(!user || !await bcrypt.compare(password, user.password))
+            error = 'Email ou senha incorretos!'
+        
+        if(error != null) {
+            req.error = error
+            return login(req, res)
+        }
             
         const token = generateToken({id: user.id, firstName: user.firstName, Image: user.Image.name, ratings: user.Ratings, favorites: user.Favorites})
 
@@ -109,11 +113,13 @@ const logout = async (req, res) => {
 
 const show = async (req, res) => {
     try {
-        let jsScripts = ['user.js']
-        let cssStyles = ['user.css']
-        let pageTitle = 'Editar'
+        let jsScripts = ['user.js', 'navbar.js']
+        let cssStyles = ['user.css', 'navbar.css']
+        let pageTitle = 'Meus Dados'
 
-        return res.render('register', { pageTitle, cssStyles, jsScripts, error: req?.error })
+        let user = await Users.findOne({ _id: req.id })
+
+        return res.render('register', { pageTitle, cssStyles, jsScripts, error: req?.error, req, user })
     } catch (error) {
         console.log(error)
         return res.status(400).send(error.stack)
@@ -122,22 +128,50 @@ const show = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        return res.send('teste')
+        const { name, encPasswd, oldPasswd, passwd, confPasswd } = req.body
+        let error
+        
+        if(!name)
+            error = 'Elementos POST não enviados!'
 
-        const { firstName, lastName, Image } = req.body
+        if((passwd && !await bcrypt.compare(oldPasswd, encPasswd)) || passwd != confPasswd)
+            error = 'Senha incorreta!'
 
-        const userData = {
-            firstName, lastName, Image
+        let names = name.trim().replace(/  +/g, ' ')
+
+        let user = {
+            firstName: names.substring(0, names.indexOf(' ')), 
+            lastName: names.substring(names.indexOf(' ')+1),
         }
 
-        if(!firstName || !lastName)
-            return res.status(400).send('Elementos POST não enviados!')
+        if(passwd)
+            user['password'] = await bcrypt.hash(passwd, await bcrypt.genSalt(10));
 
-        // get id by token
-        if(!await Users.findByIdAndUpdate(req.id, userData))
-            return res.send('Usuário não encontrado!')
-        
-        return res.send('Usuário atualizado com sucesso.')
+        if(req?.file?.filename) {
+            if(req.image != null)
+                fs.unlinkSync(`../src/IMG/${req.image}`)
+
+            user['Image'] = { name: req.file.filename }
+        }
+
+        if(error != null) {
+            req.error = error
+            return show(req, res)
+        }
+
+        user = await Users.findByIdAndUpdate({ _id: req.id }, user, { new: true})
+    
+        const token = generateToken({id: req.id, firstName: user.firstName, Image: user.Image.name, ratings: req.Ratings, favorites: req.Favorites})
+    
+        res.cookie('auth', `Bearer ${token}`, {
+            httpOnly: true,
+            secure: true
+        })
+
+        req.error     = 'Informações salvas com sucesso!'
+        req.firstName = user.firstName
+        req.image     = user.Image.name
+        return show(req, res)
     } catch (error) {
         console.log(error)
         return res.status(400).send(error.stack)

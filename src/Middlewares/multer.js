@@ -1,7 +1,6 @@
 const multer = require('multer')
 const path   = require('path')
 const crypto = require('crypto')
-const userController = require('../Controller/userController')
 const Users  = require('../Model/Users')
 
 module.exports = {

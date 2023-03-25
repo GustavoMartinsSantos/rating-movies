@@ -1,34 +1,69 @@
     <%- include('./header.ejs') -%>
+    <% if(typeof user != 'undefined') { %>
+        <%- include('./navbar.ejs') -%>
+    <% } %>
     <body class="bg-dark">
-        <form id="registerForm" method="POST" enctype="multipart/form-data"
-        action="./register?email="
-        class="form-control container bg-primary text-white p-4">
-            <h2 class="title text-center">Cadastrar nova conta</h2>
+        <form id="registerForm" method="POST" enctype="multipart/form-data" action=""
+        class="form-control container bg-primary text-white p-4" 
+        onsubmit="<%- (typeof user == 'undefined') ? 'checkEmail(this)' : null -%>" 
+        style="<%- (typeof user !== 'undefined') ? 'margin-top: 80px' : null -%>">
+            <h2 class="title text-center">
+            <% if (typeof user !== 'undefined') { %>
+                Editar perfil
+            <% } else { %>
+                Cadastrar nova conta
+            <% } %>
+            </h2>
 
             <% if(typeof error !== 'undefined') { %>
-                <div class="alert alert-danger">
+                <div class="alert alert-<%- (error == 'Informações salvas com sucesso!') ? 'success' : 'danger' -%>">
                     <%- error -%>
                 </div>
             <% } %>
 
             <div class="text-center">
-                <img src="../IMG/user.jpg" id="image" class="rounded-circle" alt="Imagem de Perfil" onclick="imagePreview()">
+                <img src="../IMG/<%- (typeof user !== 'undefined' && user.Image.name != null) ? user.Image.name : 'user.jpg' -%>" id="image" class="rounded-circle" alt="Imagem de Perfil" onclick="imagePreview()">
                 <input id="fileInput" type="file" class="" accept="image/*" name="image" onchange="imagePrev()">
             </div>
 
             <label class="form-label">Nome completo</label>
-            <input type="text" name="name" class="form-control mb-3" required>
+            <input type="text" name="name" class="form-control mb-3"
+            value="<%- (typeof user !== 'undefined') ? `${user.firstName} ${user.lastName}` : null -%>" required>
             
+            <% if(typeof user == 'undefined') { %>
             <label class="form-label">Email</label>
-            <input type="email" name="email" class="form-control mb-3" required>
+            <input type="email" name="email" class="form-control mb-3"
+            value="<%- (typeof user !== 'undefined') ? user.email : null -%>" required>
+            <% } %>
+    
+            <% if(typeof user != 'undefined') { %>
+            <label class="form-label">Senha Atual</label>
+            <input type="hidden" name="encPasswd" value="<%- user.password -%>">
+            <input type="text" name="oldPasswd" class="form-control mb-3" minlength="8">
+            <% } %>
 
-            <label class="form-label">Senha</label>
-            <input type="text" name="passwd" class="form-control mb-3" minlength="8" required>
+            <label class="form-label"><%- (typeof user == 'undefined') ? 'Senha' : 'Nova senha' -%></label>
+            <input type="text" name="passwd" class="form-control mb-3" minlength="8" <%- (typeof user == 'undefined') ? 'required' : null -%>>
 
-            <label class="form-label">Confirmar Senha</label>
-            <input id="confPasswd" type="password" class="form-control mb-3" required onblur="confPassword()">
+            <label class="form-label"><%- (typeof user == 'undefined') ? 'Confirmar Senha' : 'Confirmar nova senha' -%></label>
+            <input id="confPasswd" type="password" name="confPasswd" class="form-control mb-3" onblur="confPassword()" <%- (typeof user == 'undefined') ? 'required' : null -%>>
 
-            <input type="submit" onclick="checkEmail(this)" class="form-control border-0 text-white float-right btn bg-danger" value="Cadastrar-se">
+            <% if(typeof user != 'undefined') { %> 
+            <div class="row">
+                <div class="col">
+                    <input type="submit" class="form-control border-0 text-white float-right btn bg-danger" value="Salvar Informações">
+                </div>
+
+                <div class="col">
+                    <a href="#" class="btn btn-warning w-100">
+                        <i class="bi bi-envelope"></i>
+                        Alterar e-mail
+                    </a>
+                </div>
+            </div>
+            <% } else { %>
+            <input type="submit" class="form-control border-0 text-white float-right btn bg-danger" value="Cadastrar-se">
+            <% } %>
         </form>
     </body>
 </html>
