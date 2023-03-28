@@ -1,0 +1,25 @@
+    <%- include('./header.ejs') -%>
+    <%- include('./navbar.ejs') -%>
+    <body class="bg-dark">
+        <form method="POST" class="form-control container w-25 p-4 border-0 bg-primary text-white" style="margin-top: 10%">
+            <h3 class="title text-center" style="font-family: Berlin Sans FB;">Editar e-mail</h3>
+            
+            <% if(typeof error !== 'undefined') { %>
+                <div class="alert alert-danger">
+                    <%- error -%>
+                </div>
+            <% } %>
+
+            <label class="form-label">Email</label>
+            <input type="text" name="email" class="form-control mb-3" value="<%- user.email -%>" required>
+
+            <label class="form-label">Senha Atual</label>
+            <input type="text" name="passwd" class="form-control mb-3" required>
+            
+            <button type="submit" class="form-control border-0 float-right btn bg-warning">
+                <i class="bi bi-envelope"></i>
+                Alterar e-mail
+            </button>
+        </form>
+    </body>
+</html>

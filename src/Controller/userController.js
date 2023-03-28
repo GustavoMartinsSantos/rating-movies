@@ -2,6 +2,7 @@ const JWT    = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const Users  = require('../Model/Users')
 const fs = require('fs')
+const { findOne } = require('../Model/Users')
 
 function generateToken (params = {}) {
     return JWT.sign(params, process.env.SECRET, {
@@ -178,6 +179,58 @@ const update = async (req, res) => {
     }
 }
 
+const showEmail = async (req, res) => {
+    try {
+        let jsScripts = ['navbar.js']
+        let cssStyles = ['navbar.css']
+        let pageTitle = 'Editar email'
+
+        let user = await Users.findOne({ _id: req.id })
+
+        return res.render('updateEmail', { pageTitle, cssStyles, jsScripts, error: req?.error, req, user })
+    } catch (error) {
+        console.log(error)
+        return res.status(400).send(error.stack)
+    }
+}
+
+const updateEmail = async (req, res) => {
+    try {
+        const { email, passwd } = req.body
+        let error
+
+        if(!email || !passwd)
+            error = 'Elementos POST não enviados!'
+
+        let user = await Users.findOne({ _id: req.id })
+
+        if(user.email !== email) {
+            if(await Users.findOne({ email: email }))
+                error = 'Este email já está cadastrado no sistema!'
+        }
+
+        if(!await bcrypt.compare(passwd, user.password))
+            error = 'Senha incorreta!'
+
+        if(error != null) {
+            req.error = error
+            return showEmail(req, res)
+        }
+
+        user = {
+            email: email
+        }
+
+        await Users.updateOne({ _id: req.id }, user)
+
+        req.error = 'Informações salvas com sucesso!'
+        return show(req, res)
+    } catch (error) {
+        console.log(error)
+        return res.status(400).send(error.stack)
+    }
+}
+
 module.exports = {
     create,
     register,
@@ -186,5 +239,7 @@ module.exports = {
     logout,
     show,
     update,
+    showEmail,
+    updateEmail,
     generateToken
 }
